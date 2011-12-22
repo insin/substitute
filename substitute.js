@@ -1,6 +1,6 @@
 var Twitter = require('ntwitter')
   , async = require('async')
-  , fmt = require('isomorph/format').format
+  , util = require('util')
 
 /**
  * Scans a user's timeline for substitution tweets in "s/this/that/" format,
@@ -23,6 +23,7 @@ function Substitute(user, auth, timeout) {
   }
 }
 
+Substitute.DEBUG = true
 Substitute.SUB_REGEXP = /^s\/((?:\\\/|[^\/])+)\/((?:\\\/|[^\/])+)\/$/
 
 /**
@@ -62,14 +63,14 @@ Substitute.prototype.loadTweets = function() {
  */
 Substitute.prototype.processTweets = function(err, tweets) {
   if (err) {
-    this.error(fmt('Error retrieving user timeline tweets: %s', err))
+    this.error('Error retrieving user timeline tweets: %s', err)
     return
   }
-  this.log(fmt('Processing %s user timeline tweets...', tweets.length))
+  this.info('Processing %s user timeline tweets...', tweets.length)
 
   async.forEachSeries(tweets.reverse(), this.processTweet.bind(this), function(err) {
     if (err) {
-      this.error(fmt('Automatically stopping - error processing tweets: %s', err))
+      this.error('Automatically stopping - error processing tweets: %s', err)
       this.stop()
     }
   })
@@ -82,6 +83,7 @@ Substitute.prototype.processTweets = function(err, tweets) {
  * was used to correct.
  */
 Substitute.prototype.processTweet = function(tweet, cb) {
+  this.debug('[%s] %s', tweet.id_str, tweet.text)
   // Grab the previous tweet in case we need it and set the current tweet up
   // for the next tweet we examine.
   var previousTweet = this.previousTweet
@@ -90,12 +92,14 @@ Substitute.prototype.processTweet = function(tweet, cb) {
   // Is this the first tweet we've looked at? Is it the first tweet after a
   // substitution was performed? Doesn't matter - we're done.
   if (previousTweet == null) {
+    this.debug('previousTweet is null')
     return cb(null)
   }
 
   // If the tweet doesn't look like a substitution, we have nothing to do
   var match = Substitute.SUB_REGEXP.exec(tweet.text)
   if (match == null) {
+    this.debug('match is null')
     return cb(null)
   }
 
@@ -104,16 +108,17 @@ Substitute.prototype.processTweet = function(tweet, cb) {
   var finder = new RegExp(match[1])
     , replacement = match[2]
   if (!finder.test(previousTweet.text)) {
-    this.warn(fmt(
+    this.warn(
       "Found a substitution tweet [%s] but the prior tweet [%s] didn't match"
     , tweet.text
-    , previousTweet.text))
+    , previousTweet.text)
     return cb(null)
   }
 
   // Perform the substitution on the target tweet, post a new tweet and delete
   // both tweets involved in the substitution.
   var correctedText = previousTweet.text.replace(finder, replacement)
+  this.info('Correcting [%s] to [%s]', previousTweet.text, correctedText)
   this.correctTweet(correctedText, previousTweet, tweet, cb)
 }
 
@@ -129,6 +134,7 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
   async.series([
   // 1. Post the corrected tweet
     function(cb) {
+      this.debug('Updating status')
       this.twitter.updateStatus(correctedText, {
         // TODO Carry over more fields from the original tweet if possible
         in_reply_to_status_id: originalTweet.in_reply_to_status_id_str
@@ -138,16 +144,18 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
   , function(cb) {
       async.parallel([
         function(cb) {
+          this.debug('Deleting original tweet %s', originalTweet.id_str)
           this.twitter.destroyStatus(originalTweet.id_str, cb)
         }.bind(this)
       , function(cb) {
+          this.debug('Deleting substitution tweet %s', substitutionTweet.id_str)
           this.twitter.destroyStatus(substitutionTweet.id_str, cb)
         }.bind(this)
       ],
       // Deletion results should be [deleted1, deleted2]
       function(err, results) {
         if (err) {
-          this.error(fmt('Error deleting substitition tweets: %s', err))
+          this.error('Error deleting substitition tweets: %s', err)
         }
         // Back to the outer async.series
         cb(err, results)
@@ -158,7 +166,7 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
   function(err, results) {
     if (err) {
       if (results.length == 0) {
-        this.error(fmt('Error posting corrected tweet: %s', err))
+        this.error('Error posting corrected tweet: %s', err)
       }
       // Back to caller with error
       return cb(err)
@@ -174,20 +182,30 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
 
 // Logging with prefixed information -------------------------------------------
 
-Substitute.prototype.log = function(msg) {
-  console.log(this._logMsg(msg))
+Substitute.prototype.debug = function(msg) {
+  if (Substitute.DEBUG) {
+    util.debug(util.format.apply(util, this._logMsgArgs(arguments)))
+  }
+}
+
+Substitute.prototype.info = function(msg) {
+  console.info.apply(console, (this._logMsgArgs(arguments)))
 }
 
 Substitute.prototype.warn = function(msg) {
-  console.warn(this._logMsg(msg))
+  console.warn.apply(console, (this._logMsgArgs(arguments)))
 }
 
 Substitute.prototype.error = function(msg) {
-  console.error(this._logMsg(msg))
+  console.error.apply(console, (this._logMsgArgs(arguments)))
 }
 
-Substitute.prototype._logMsg = function(msg) {
-  return fmt('%s [%s] %s', new Date().toTimeString(), this.user, msg)
+Substitute.prototype._logMsgArgs = function(args) {
+  var formatArgs = ['%s [%s] ' + args[0], new Date().toTimeString(), this.user]
+  if (args.length > 1) {
+    formatArgs.push.apply(formatArgs, Array.prototype.slice.call(args, 1))
+  }
+  return formatArgs
 }
 
 module.exports = Substitute
