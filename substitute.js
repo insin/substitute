@@ -2,8 +2,6 @@ var Twitter = require('ntwitter')
   , async = require('async')
   , fmt = require('isomorph/format').format
 
-var SUB_REGEXP = /^s\/([^\/]+)\/([^\/]+)\/$/
-
 /**
  * Scans a user's timeline for substitution tweets in "s/this/that/" format,
  * correcting the previous tweet using the replacement expression and deleting
@@ -24,6 +22,8 @@ function Substitute(user, auth, timeout) {
     this.start(timeout)
   }
 }
+
+Substitute.SUB_REGEXP = /^s\/((?:\\\/|[^\/])+)\/((?:\\\/|[^\/])+)\/$/
 
 /**
  * Loads the first batch of tweets and schedules regular loading of tweets at
@@ -94,7 +94,7 @@ Substitute.prototype.processTweet = function(tweet, cb) {
   }
 
   // If the tweet doesn't look like a substitution, we have nothing to do
-  var match = SUB_REGEXP.exec(tweet.text)
+  var match = Substitute.SUB_REGEXP.exec(tweet.text)
   if (match == null) {
     return cb(null)
   }
