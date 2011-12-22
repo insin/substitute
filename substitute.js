@@ -117,6 +117,13 @@ Substitute.prototype.processTweet = function(tweet, cb) {
   this.correctTweet(correctedText, previousTweet, tweet, cb)
 }
 
+/**
+ * Creates a new tweet and deletes the original and substitution tweet which
+ * were used to create its text.
+ * @param correctedText text for the new tweet.
+ * @param originalTweet tweet date for the original tweet with the typo.
+ * @param substitutionTweet tweet date for the substitution tweet.
+ */
 Substitute.prototype.correctTweet = function(correctedText, originalTweet,
                                              substitutionTweet, cb) {
   async.series([
@@ -140,7 +147,7 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
       // Deletion results should be [deleted1, deleted2]
       function(err, results) {
         if (err) {
-          console.error(fmt('Error deleting substitition tweets: %s', err))
+          this.error(fmt('Error deleting substitition tweets: %s', err))
         }
         // Back to the outer async.series
         cb(err, results)
