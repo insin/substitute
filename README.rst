@@ -4,9 +4,9 @@ Substitute
 
 .. image:: https://github.com/insin/substitute/raw/master/icon.png
 
-A `Node.js`_/`ntwitter`_-based `Twitter`_ app which monitors for tweets which consist of a "s/this/that"
-substitution expression and performs the replacement on the preceding tweet if
-if it matches the "this" part.
+A `Node.js`_/`ntwitter`_-based `Twitter`_ app which monitors for tweets which
+consist of a "s/this/that/"-style  substitution expression and performs the
+replacement on the preceding tweet if it matches the "this" part.
 
 Sample code::
 
@@ -17,6 +17,7 @@ Sample code::
     , access_token_key: 'user key'
     , access_token_secret: 'user secret'
     })
+    // Load new tweets immediately and every 60 seconds thereafter
     s.start()
 
 .. _`Node.js`: http://nodejs.org
