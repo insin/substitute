@@ -2,7 +2,7 @@ var Twitter = require('ntwitter')
   , async = require('async')
   , fmt = require('isomorph/format').format
 
-var SUB_REGEXP = /^s\/([^\/])+\/([^\/])+\//
+var SUB_REGEXP = /^s\/([^\/]+)\/([^\/]+)\/$/
 
 /**
  * Scans a user's timeline for substitution tweets in "s/this/that/" format,
@@ -67,7 +67,7 @@ Substitute.prototype.processTweets = function(err, tweets) {
   }
   this.log(fmt('Processing %s user timeline tweets...', tweets.length))
 
-  async.forEachSeries(tweet.reverse(), this.processTweet.bind(this), function(err) {
+  async.forEachSeries(tweets.reverse(), this.processTweet.bind(this), function(err) {
     if (err) {
       this.error(fmt('Automatically stopping - error processing tweets: %s', err))
       this.stop()
@@ -85,9 +85,7 @@ Substitute.prototype.processTweet = function(tweet, cb) {
   // Grab the previous tweet in case we need it and set the current tweet up
   // for the next tweet we examine.
   var previousTweet = this.previousTweet
-  this.previousTWeet = tweet
-
-  console.log(fmt('[%s] %s', tweet.id_str, tweet.text))
+  this.previousTweet = tweet
 
   // Is this the first tweet we've looked at? Is it the first tweet after a
   // substitution was performed? Doesn't matter - we're done.
@@ -103,11 +101,11 @@ Substitute.prototype.processTweet = function(tweet, cb) {
 
   // If the previous tweet doesn't look like the substitution expression. we
   // can't do anything with it.
-  var finder = new RegExp(match[0])
-    , replacement = match[1]
+  var finder = new RegExp(match[1])
+    , replacement = match[2]
   if (!finder.test(previousTweet.text)) {
     this.warn(fmt(
-      "Found a substitution tweet: [%s] but the prior tweet didn't match: [%s]"
+      "Found a substitution tweet [%s] but the prior tweet [%s] didn't match"
     , tweet.text
     , previousTweet.text))
     return cb(null)
@@ -133,16 +131,16 @@ Substitute.prototype.correctTweet = function(correctedText, originalTweet,
   , function(cb) {
       async.parallel([
         function(cb) {
-          this.twitter.deleteTweet(originalTweet.id_str, cb)
+          this.twitter.destroyStatus(originalTweet.id_str, cb)
         }.bind(this)
       , function(cb) {
-          this.twitter.deleteTweet(substitutionTweet.id_str, cb)
+          this.twitter.destroyStatus(substitutionTweet.id_str, cb)
         }.bind(this)
       ],
       // Deletion results should be [deleted1, deleted2]
       function(err, results) {
         if (err) {
-          this.error(fmt('Error deleting substitition tweets: %s', err))
+          console.error(fmt('Error deleting substitition tweets: %s', err))
         }
         // Back to the outer async.series
         cb(err, results)
