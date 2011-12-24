@@ -70,7 +70,7 @@ Substitute.prototype.processTweets = function(err, tweets) {
     this.error('Error retrieving user timeline tweets: %s', err)
     return
   }
-  this.info('Processing %suser timeline tweet%s...',
+  this.info('Processing %s user timeline tweet%s...',
             tweets.length,
             pluralise(tweets.length))
 
