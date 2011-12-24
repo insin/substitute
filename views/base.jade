@@ -1,0 +1,41 @@
+!!!
+html
+  head
+    title Substitute
+    block style
+      link(rel='stylesheet', href='/css/bootstrap.css')
+      style
+        body { padding-top: 60px; }
+        .topbar .user {
+          color: #fff;
+          display: block;
+          float: right;
+          font-size: 20px;
+          font-weight: 200;
+          line-height: 1;
+          margin-right: -20px;
+          padding: 8px 20px 12px;
+        }
+        .topbar .user img {
+          vertical-align: text-bottom;
+          margin-right: 3px;
+        }
+    block scripts
+  body
+    .topbar
+      .fill
+        .container
+          strong.brand(href='/') Substitute
+          ul.nav
+            li.nav-home.active
+              a(href='/') Home
+            li.nav-expressions
+              a(href='/expressions/') Expressions
+          .user
+            img(src='/img/twitter_userlight.png')
+            \#{username}
+    .container
+      block main_content
+      footer
+        p
+          a(href='http://github.com/insin/substitute') Fork me on GitHub

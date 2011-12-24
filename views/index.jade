@@ -1,0 +1,57 @@
+extends hero
+
+append style
+  style
+    .examples { text-align: center; }
+    p.arrow { font-size: 24px; }
+    a.large { line-height: 23px; }
+    a.large img { vertical-align: text-bottom; margin-right: 3px; }
+
+block content
+  h1 Substitute
+  p Just fat-fingered a tweet?
+  p
+    | Tweet a substitution expression and, within a minute, Substitute will post
+    | a corrected tweet and delete the incorrect one for you.
+  p
+    | Substitution expressions are regular expressions which look like this
+    code s/this/that/
+    | . Find out more about them on the
+    a(href='/expressions/') Expressions page
+    | .
+  p
+    a.btn.primary.large(href='/auth/twitter')
+      img(src='/img/twitter_userlight.png')
+      | Sign in with Twitter &rsaquo;
+
+block columns
+  .span5.examples
+    h2 Fix typos!
+    p This book contains some terrible grammer.
+    p.arrow &#8675;
+    p
+      code s/grammer/grammar/
+    p.arrow &#8675;
+    p This book contains some terrible grammar.
+    p
+      img(src='/img/icon_small.png')
+  .span6.examples
+    h2 Accidentally something?
+    p I think my an idiot
+    p.arrow &#8675;
+    p
+      code s/ an/friend's being an/
+    p.arrow &#8675;
+    p I think my friend's being an idiot
+    p
+      img(src='/img/icon_small.png')
+  .span5.examples
+    h2 Put T9 in line!
+    p @wife Got a load of anal while I was out
+    p.arrow &#8675;
+    p
+      code s/anal/coal/
+    p.arrow &#8675;
+    p @wife Got a load of coal while I was out
+    p
+      img(src='/img/icon_small.png')
