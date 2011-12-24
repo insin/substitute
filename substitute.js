@@ -2,6 +2,10 @@ var Twitter = require('ntwitter')
   , async = require('async')
   , util = require('util')
 
+function pluralise(i) {
+  return (i === 1 ? '' : 's')
+}
+
 /**
  * Scans a user's timeline for substitution tweets in "s/this/that/" format,
  * correcting the previous tweet using the replacement expression and deleting
@@ -66,7 +70,9 @@ Substitute.prototype.processTweets = function(err, tweets) {
     this.error('Error retrieving user timeline tweets: %s', err)
     return
   }
-  this.info('Processing %s user timeline tweets...', tweets.length)
+  this.info('Processing %suser timeline tweet%s...',
+            tweets.length,
+            pluralise(tweets.length))
 
   async.forEachSeries(tweets.reverse(), this.processTweet.bind(this), function(err) {
     if (err) {
