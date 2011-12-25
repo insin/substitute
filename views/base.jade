@@ -27,13 +27,14 @@ html
         .container
           strong.brand(href='/') Substitute
           ul.nav
-            li.nav-home.active
+            li.nav-home
               a(href='/') Home
             li.nav-expressions
               a(href='/expressions/') Expressions
-          .user
-            img(src='/img/twitter_userlight.png')
-            \#{username}
+          if user.isAuthenticated
+            .user
+              img(src='/img/twitter_userlight.png')
+              a(href='/control_panel/') #{user.screenName}
     .container
       block main_content
       footer

@@ -19,10 +19,11 @@ block content
     | . Find out more about them on the
     a(href='/expressions/') Expressions page
     | .
-  p
-    a.btn.primary.large(href='/auth/twitter')
-      img(src='/img/twitter_userlight.png')
-      | Sign in with Twitter &rsaquo;
+  if !user.isAuthenticated
+    p
+      a.btn.primary.large(href='/auth/twitter')
+        img(src='/img/twitter_userlight.png')
+        | Sign in with Twitter &rsaquo;
 
 block columns
   .span5.examples
