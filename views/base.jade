@@ -1,7 +1,9 @@
 !!!
 html
   head
-    title Substitute
+    title
+      block title
+        | Substitute
     block style
       link(rel='stylesheet', href='/css/bootstrap.css')
       style
@@ -19,6 +21,19 @@ html
         .topbar .user img {
           vertical-align: text-bottom;
           margin-right: 3px;
+        }
+        div.expression {
+          padding: 3px 0 12px 1em;
+          font-size: 2em;
+          font-family: monospace;
+          overflow: hidden
+        }
+        div.expression span {
+          float: left;
+          background-color: #FEFBF3;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          padding: 9px;
         }
     block scripts
   body

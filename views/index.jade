@@ -9,16 +9,16 @@ append style
 
 block content
   h1 Substitute
-  p Just fat-fingered a tweet?
-  p
-    | Tweet a substitution expression and, within a minute, Substitute will post
-    | a corrected tweet and delete the incorrect one for you.
-  p
-    | Substitution expressions are regular expressions which look like this
-    code s/this/that/
-    | . Find out more about them on the
-    a(href='/expressions/') Expressions page
-    | .
+  p Just tweeted a typo?
+  p.
+    Tweet a substitution expression and Substitute will post a corrected tweet
+    and delete the incorrect and substitution expression tweets for you.
+  p.
+    Substitution expressions are tweets which look like this:
+  .expression: span.
+    s/this/that/
+  p.
+    Find out more about them on the <a href="expressions/">Expressions</a> page.
   if !user.isAuthenticated
     p
       a.btn.primary.large(href='/auth/twitter')

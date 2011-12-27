@@ -1,0 +1,151 @@
+extends base
+
+block title
+  | Replacement Expressions
+
+append style
+  style
+    section { padding-top: 50px; }
+    section.first { padding-top: 0; }
+    td.flag { font-size: 18px; }
+
+block main_content
+  section#introduction.first
+    .page-header
+      h1 Replacement Expressions
+    p.
+      When scanning your Twitter timeline, Substitute looks for tweets which
+      match the the following pattern, where square brackets indicate
+      placeholders for your instructions on how to correct the previous tweet:
+    .expression: span.
+      s/[<a href="#finding">find</a>]/[<a href="#finding">replace</a>]/[<a href="#flags">flags</a>]
+    p A simple example of a replacement expression is&hellip;
+    .expression: span
+      | s/this/that/g
+    p &hellip;which replaces every occurrence of "this" with "that".
+    p.
+      Since forward slashes are used to delineate the parts of a replacement
+      expression, if you need to match a forward slash as part of the text to be
+      replaced, you will need to escape it with a backslash. For example&hellip;
+    .expression: span
+      | s/\/vv/\/cc/
+    p &hellip;which replaces thr first occurrence of "/vv" with "/cc".
+
+  section#flags
+    .page-header
+      h1
+        | Flags
+        small Control the fun!
+    .row
+      .span4
+        p.
+          Flags can optionally be appended to the end of replacement expressions
+          used to alter how the find and replace expressions are used.
+      .span12
+        p By default:
+        ul
+          li.
+            Find and replace expressions are treated as verbatim text - whatever
+            you specify is exactly what will be searched for and replaced with.
+          li.
+            Only the first occurence of text matching the find expression is
+            replaced.
+          li.
+           The find expression is case-sensitive.
+        p.
+          You can change this behaviour by adding single-character flags to the
+          end of the replacement expression. The available flags are:
+        table.bordered-table.zebra-striped
+          thead
+            tr
+              th Flag
+              th Effect
+          tbody
+            tr#flag-g
+              td.flag g
+              td.
+                Enables global replacement - all occurences of the
+                <a href="#finding">find</a> expression will be replaced.
+            tr#flag-i
+              td.flag i
+              td.
+                Makes the find expression ignore case.
+            tr#flag-r
+              td.flag r
+              td.
+                Enables RegExp mode -
+                <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/RegExp#Special_characters_in_regular_expressions">special Regular Expression characters</a>
+                in the find expression and <a href="#replacing">special patterns</a>
+                in the replacement string will be treated as such.
+        p.
+          <strong class="label warning">Note:</strong> Using a flag which Substitute
+          doesn't recognise will cause it to not recognise a tweet as a
+          replacement expression.
+
+  section#finding
+    .page-header
+      h1
+        | Finding
+        small Using verbatim text or Regular Expression special patterns
+    .row
+      .span4
+        p.
+          Default behaviour is to search for the find expression you supplied
+          verbatim.
+        p.
+          Finding text to be replaced using RegExp mode gives you more power,
+          but is probably overkill for most of the typo fixes you would need
+          to make to a 140-character max. message,
+      .span12
+        p.
+          When the <code>r</code> flag is used to activate RegExp mode, the
+          find string can make use of
+          <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/RegExp#Special_characters_in_regular_expressions">
+          special characters supported by JavaScript's <code>RegExp</code></a>.
+        p.
+          We're not going to go into introducing regular expressions here -
+          suffice to say that if you don't know what they are, don't worry about
+          it, you probably don't need them; if you need them, you probably
+          already know what they are - also, <em>what the hell are you
+          tweeting</em> that needs a regular expression to fix it?
+
+  section#replacing
+    .page-header
+      h1
+        | Replacing
+        small Using verbatim text or Regular Expression matches
+    .row
+      .span4
+        p.
+          Default behaviour is to use your replacement string verbatim.
+        p.
+          When replacing text in RegExp mode, you can take advantage of
+          JavaScript's special replacement patterns.
+      .span12
+        p.
+          When the <code>r</code> flag is used to activate RegExp mode, the
+          replacement string can make use of the following special replacement
+          patterns:
+        table.bordered-table.zebra-striped
+          thead
+            tr
+              th Pattern
+              th Inserts
+          tbody
+            tr
+              td.flag $$
+              td Inserts a "$".
+            tr
+              td.flag $&
+              td Inserts the matched substring.
+            tr
+              td.flag $`
+              td Inserts the portion of the string that precedes the matched substring.
+            tr
+              td.flag $'
+              td Inserts the portion of the string that follows the matched substring.
+            tr
+              td.flag $n or $nn
+              td.
+                Where n or nn are decimal digits, inserts the nth parenthesized
+                submatch string.
