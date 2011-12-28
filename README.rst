@@ -1,6 +1,9 @@
-==========
-Substitute
-==========
+==========================
+Substitute |travis_status|
+==========================
+
+.. |travis_status| image:: https://secure.travis-ci.org/insin/substitute.png
+   :target: http://travis-ci.org/insin/substitute
 
 .. image:: https://github.com/insin/substitute/raw/master/static/img/icon.png
 
