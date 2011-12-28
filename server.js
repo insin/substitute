@@ -4,6 +4,7 @@ var express = require('express')
   , settings = require('./settings')
   , redis = require('redis').createClient()
   , util = require('util')
+  , substitute = require('./index')
 
 redis.on('error', function (err) {
     console.error('Redis Error: %s', err)
@@ -21,11 +22,23 @@ var oa = new OAuth(
 
 var app = express.createServer()
 
+// ---------------------------------------------------------- Express Config ---
+
+// Use Jade as the default template engine
+app.set('view engine', 'jade')
+// Use template inheritance
+app.set('view options', { layout: false })
+
+/**
+ * Middleware which loads user details when the current user is authenticated.
+ */
 function loadUser(req, res, next) {
   if (req.session.userId) {
     redis.hgetall(util.format('user:%s', req.session.userId), function(err, user) {
       if (err) {
-        return next(new Error(util.format('Failed to load user: %s'), req.session.userId))
+        return next(
+          new Error(util.format('Failed to load user: %s', req.session.userId))
+        )
       }
       else {
         user.isAuthenticated = true
@@ -48,29 +61,39 @@ app.configure(function() {
   app.use(loadUser)
   app.use(app.router)
   app.use(express.static(__dirname + '/static'))
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
+  app.use(express.errorHandler({ showStack: true, dumpExceptions: true }))
 })
 
+// Add variables to the default template context
+app.helpers({
+  version: substitute.version
+})
 app.dynamicHelpers({
   user: function(req, res) {
     return req.user
   }
 })
 
-app.set('view engine', 'jade')
-app.set('view options', { layout: false })
+// ------------------------------------------------------------- URL Mapping ---
 
-app.error(function(err, req, res) {
-  res.render('error', {
-     error: err
-  })
+app.get('/',                      index)
+app.get('/auth/twitter',          twitterAuth)
+app.get('/auth/twitter/callback', twitterAuthCallback)
+app.get('/controlpanel',          userControlPanel)
+app.get('/expressions',           expressions)
+
+// Register a catch-all handler to render 404.jade
+app.use(function(req, res, next) {
+  res.render('404')
 })
 
-app.get('/', function(req, res) {
+// ---------------------------------------------------------- View Functions ---
+
+function index(req, res) {
   res.render('index')
-})
+}
 
-app.get('/auth/twitter', function(req, res, next) {
+function twitterAuth(req, res, next) {
   oa.getOAuthRequestToken(function(err, token, secret, results) {
     if (err) {
       console.error(err)
@@ -85,48 +108,47 @@ app.get('/auth/twitter', function(req, res, next) {
       res.redirect('https://twitter.com/oauth/authenticate?oauth_token=' + token)
     }
   })
-})
+}
 
-app.get('/auth/twitter/callback', function(req, res, next) {
+function twitterAuthCallback(req, res, next) {
   if (!req.session.oauth) {
-    return next(new Error("You're not supposed to be here."))
+    return next(new Error('Twitter authorisation not in progress.'))
   }
 
   req.session.oauth.verifier = req.query.oauth_verifier
   var oauth = req.session.oauth
 
-  oa.getOAuthAccessToken(
-    oauth.token
-  , oauth.secret
-  , oauth.verifier
-  , function(err, accessToken, accessSecret, results) {
+  oa.getOAuthAccessToken(oauth.token, oauth.secret, oauth.verifier,
+    function(err, accessToken, accessSecret, results) {
       if (err) {
         console.error(err)
         return next(err)
       }
-      else {
-        var userId = results.user_id
-        redis.hmset(util.format('user:%s', userId), {
-          id: userId
-        , screenName: results.screen_name
-        , accessToken: accessToken
-        , accessSecret: accessSecret
-        })
-        req.session.userId = userId
-        delete req.session.oauth
-        res.render('controlpanel')
-      }
+
+      var userId = results.user_id
+      redis.hmset(util.format('user:%s', userId), {
+        id: userId
+      , screenName: results.screen_name
+      , accessToken: accessToken
+      , accessSecret: accessSecret
+      })
+      req.session.userId = userId
+      delete req.session.oauth
+      res.redirect('/controlpanel')
     }
   )
-})
+}
 
-app.get('/control_panel/', function(req, res) {
+function userControlPanel(req, res, next) {
+  if (!req.user.isAuthenticated) {
+    return next(new Error('You must be signed in to view this page.'))
+  }
   res.render('controlpanel')
-})
+}
 
-app.get('/expressions/', function(req, res) {
+function expressions(req, res) {
   res.render('expressions')
-})
+}
 
-app.listen(3000, '0.0.0.0')
-console.log('Substitute server listening on http://127.0.0.1:3000')
+app.listen(settings.port, '0.0.0.0')
+console.log('Substitute server listening on ' + settings.domain)

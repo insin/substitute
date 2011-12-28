@@ -1,0 +1,29 @@
+{
+  "name": "Substitute"
+, "description": "Twitter app for correcting the previous tweet by tweeting s/this/that/ expressions"
+, "version": "0.0.1"
+, "author": "Jonathan Buchanan <jonathan.buchanan@gmail.com> (https://github.com/insin)"
+, "homepage": "https://github.com/insin/substitute"
+, "tags": ["twitter-app", "correction", "edit"]
+, "main": "index"
+, "repository": {
+    "type": "git"
+  , "url": "https://github.com/insin/substitute.git"
+  }
+, "dependencies": {
+    "async": "0.1.x"
+  , "connect-redis": "1.2.x"
+  , "express": "2.5.x"
+  , "jade": "0.19.x"
+  , "ntwitter": "0.2.x"
+  , "oauth": "0.9.x"
+  , "redis": "0.7.x"
+  }
+, "devDependencies": {
+    "mocha": "0.7.x"
+  }
+, "scripts": {
+    "run": "node server.js"
+  , "test": "mocha"
+  }
+}

@@ -2,23 +2,11 @@
 Substitute
 ==========
 
-.. image:: https://github.com/insin/substitute/raw/master/icon.png
+.. image:: https://github.com/insin/substitute/raw/master/static/img/icon.png
 
-A `Node.js`_/`ntwitter`_-based `Twitter`_ app which monitors for tweets which
-consist of a "s/this/that/"-style  substitution expression and performs the
-replacement on the preceding tweet if it matches the "this" part.
-
-Sample code::
-
-    var Substitute = require('./substitute')
-    var s = new Substitute('user screen name', {
-      consumer_key: 'app key'
-    , consumer_secret: 'app secret'
-    , access_token_key: 'user key'
-    , access_token_secret: 'user secret'
-    })
-    // Load new tweets immediately and every 60 seconds thereafter
-    s.start()
+A `Node.js`_/`ntwitter`_-based `Twitter`_ app which scans for tweets which are
+``s/find/replace/flags?`` substitution expressions and uses them to correct the
+immediately preceding tweet if it matches the ``find`` expression.
 
 .. _`Node.js`: http://nodejs.org
 .. _`ntwitter`: https://github.com/AvianFlu/ntwitter

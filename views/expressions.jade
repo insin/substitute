@@ -1,7 +1,7 @@
 extends base
 
 block title
-  | Replacement Expressions
+  | Substitution Expressions
 
 append style
   style
@@ -12,24 +12,24 @@ append style
 block main_content
   section#introduction.first
     .page-header
-      h1 Replacement Expressions
+      h1 Substitution Expressions
     p.
       When scanning your Twitter timeline, Substitute looks for tweets which
       match the the following pattern, where square brackets indicate
       placeholders for your instructions on how to correct the previous tweet:
     .expression: span.
       s/[<a href="#finding">find</a>]/[<a href="#finding">replace</a>]/[<a href="#flags">flags</a>]
-    p A simple example of a replacement expression is&hellip;
+    p A simple example of a substitution expression is&hellip;
     .expression: span
       | s/this/that/g
     p &hellip;which replaces every occurrence of "this" with "that".
     p.
-      Since forward slashes are used to delineate the parts of a replacement
+      Since forward slashes are used to delineate the parts of a substitution
       expression, if you need to match a forward slash as part of the text to be
       replaced, you will need to escape it with a backslash. For example&hellip;
     .expression: span
-      | s/\/vv/\/cc/
-    p &hellip;which replaces thr first occurrence of "/vv" with "/cc".
+      | s/\\/vv/\\/cc/
+    p &hellip;which replaces the first occurrence of "/vv" with "/cc".
 
   section#flags
     .page-header
@@ -39,7 +39,7 @@ block main_content
     .row
       .span4
         p.
-          Flags can optionally be appended to the end of replacement expressions
+          Flags can optionally be appended to the end of substitution expressions
           used to alter how the find and replace expressions are used.
       .span12
         p By default:
@@ -54,7 +54,7 @@ block main_content
            The find expression is case-sensitive.
         p.
           You can change this behaviour by adding single-character flags to the
-          end of the replacement expression. The available flags are:
+          end of the substitution expression. The available flags are:
         table.bordered-table.zebra-striped
           thead
             tr
@@ -80,13 +80,13 @@ block main_content
         p.
           <strong class="label warning">Note:</strong> Using a flag which Substitute
           doesn't recognise will cause it to not recognise a tweet as a
-          replacement expression.
+          substitution expression.
 
   section#finding
     .page-header
       h1
         | Finding
-        small Using verbatim text or Regular Expression special patterns
+        small Using verbatim text or Regular Expression special characters
     .row
       .span4
         p.
@@ -113,7 +113,7 @@ block main_content
     .page-header
       h1
         | Replacing
-        small Using verbatim text or Regular Expression matches
+        small Using verbatim text or Regular Expression special patterns
     .row
       .span4
         p.
