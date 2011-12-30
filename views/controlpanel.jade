@@ -2,5 +2,54 @@ extends base
 
 block main_content
   .content
-    .page-header
-      h1 Control Panel
+    section.first
+      .page-header
+        h1 Tweet Scanner <small>Monitor, configure and control yours</small>
+      .row
+        .span3
+          h2 Status
+        .span4
+          createdAt = (''+scanner.createdAt).substring(0, 24)
+          lastRunAt = scanner.lastRunAt ? (''+scanner.lastRunAt).substring(0, 24) : '(Never)'
+          dl
+            dt Running
+            dd= scanner.running ? 'Yes' : 'No'
+            dt Created At
+            dd= createdAt
+            dt Last Run At
+            dd= lastRunAt
+        .span3
+          h2 Statistics
+        .span4
+          dl
+            dt Tweets Scanned
+            dd= scanner.tweetsScanned
+            dt Substitutions Made
+            dd= scanner.substitutionsMade
+
+      .row
+        .span3
+          h2 Control
+        .span13
+          if scanner.running
+            form(action='/controlpanel/stop', method='POST')
+              div: button.btn.danger Stop
+          else
+            form(action='/controlpanel/start', method='POST')
+              div: button.btn.success Start
+
+      .row
+        .span3
+          h2 Configure
+        .span13
+          form(action='/controlpanel/interval', method='POST')
+            fieldset
+              .clearfix
+                label(for='pollInterval') Poll Interval (ms)
+                .input
+                  input.span3(type='text',
+                              id='pollInterval',
+                              name='pollInterval',
+                              value='#{scanner.pollInterval}')
+              .actions
+                input.btn.primary(type='submit', value="Update Settings")
