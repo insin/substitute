@@ -9,14 +9,17 @@ html
       style
         body { padding-top: 60px; }
         .topbar .user {
-          color: #fff;
           display: block;
           float: right;
+          margin-right: -20px;
+        }
+
+        .topbar .user a.screenname {
+          float: left;
+          color: #fff;
           font-size: 20px;
           font-weight: 200;
-          line-height: 1;
-          margin-right: -20px;
-          padding: 8px 20px 12px;
+          padding: 8px 10px 12px 0;
         }
         section { padding-top: 50px; }
         section.first { padding-top: 0; }
@@ -50,8 +53,12 @@ html
               a(href='/expressions/') Expressions
           if user.isAuthenticated
             .user
-              img(src='/img/twitter_userlight.png')
-              a(href='/controlpanel/') #{user.screenName}
+              a.screenname(href='/controlpanel/')
+                img(src='/img/twitter_userlight.png')
+                | #{user.screenName}
+              ul
+                li
+                  a.signout(href='/auth/signout') Sign Out
     .container
       block main_content
       footer

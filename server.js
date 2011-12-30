@@ -131,6 +131,7 @@ app.dynamicHelpers({
 app.get('/',                       index)
 app.get('/auth/twitter',           twitterAuth)
 app.get('/auth/twitter/callback',  twitterAuthCallback)
+app.get('/auth/signout',           signOut)
 app.get('/controlpanel',           userControlPanel)
 app.post('/controlpanel/stop',     stopScanner)
 app.post('/controlpanel/start',    startScanner)
@@ -189,6 +190,15 @@ function twitterAuthCallback(req, res, next) {
       res.redirect('/controlpanel')
     }
   )
+}
+
+function signOut(req, res, next) {
+  if (!req.user.isAuthenticated) {
+    return next(new Error('You must be signed in to sign out.'))
+  }
+  req.session.destroy(function(err) {
+    res.redirect('/')
+  })
 }
 
 function userControlPanel(req, res, next) {
