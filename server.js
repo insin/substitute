@@ -108,7 +108,8 @@ app.configure(function() {
   app.use(express.logger())
   app.use(express.bodyParser())
   app.use(express.cookieParser())
-  app.use(express.session({ secret: settings.sessionSecret, store: new RedisStore() }))
+  app.use(express.session({ secret: settings.sessionSecret
+                          , store: new RedisStore({client: redis}) }))
   app.use(loadUser)
   app.use(app.router)
   app.use(express.static(__dirname + '/static'))
