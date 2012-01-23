@@ -14,17 +14,17 @@
     "async": "0.1.x"
   , "connect-redis": "1.2.x"
   , "express": "2.5.x"
-  , "jade": "0.19.x"
+  , "jade": "0.20.x"
   , "ntwitter": "0.2.x"
   , "oauth": "0.9.x"
   , "redis": "0.7.x"
   }
 , "devDependencies": {
-    "mocha": "0.8.x"
+    "mocha": "0.10.x"
   , "sinon": "1.2.x"
   }
 , "scripts": {
-    "run": "node server.js"
+    "start": "node server.js"
   , "test": "mocha"
   }
 }
