@@ -1,9 +1,7 @@
-var port = 3000
-
 module.exports = {
-  consumerKey: ''
-, consumerSecret: ''
-, sessionSecret: ''
-, domain: 'http://127.0.0.1:' + port
-, port: port
+  consumerKey: process.env.npm_package_config__twitter_consumer_key
+, consumerSecret: process.env.npm_package_config__twitter_consumer_secret
+, sessionSecret: process.env.npm_package_config__session_secret
+, domain: process.env.npm_package_config_domain
+, port: parseInt(process.env.npm_package_config_port, 10)
 }
