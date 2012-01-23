@@ -137,7 +137,6 @@ app.post('/controlpanel/stop',     stopScanner)
 app.post('/controlpanel/start',    startScanner)
 app.post('/controlpanel/interval', changePollInterval)
 app.get('/expressions',            expressions)
-app.all('/expressions/test',       testExpressions)
 
 // Register a catch-all handler to render 404.jade
 app.use(function(req, res, next) {
@@ -253,11 +252,6 @@ function changePollInterval(req, res, next) {
 
 function expressions(req, res) {
   res.render('expressions')
-}
-
-function testExpressions(req, res) {
-  // TODO
-  res.render('testexpressions')
 }
 
 // ---------------------------------------------------------- Server Startup ---
