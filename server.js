@@ -70,6 +70,8 @@ function createScanner(user) {
   , access_token_key: user.accessKey
   , access_token_secret: user.accessSecret
   })
+  // XXX
+  scanners[user.id].start()
   return scanners[user.id]
 }
 
