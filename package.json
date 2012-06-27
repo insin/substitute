@@ -12,16 +12,16 @@
   }
 , "dependencies": {
     "async": "0.1.x"
-  , "connect-redis": "1.2.x"
+  , "connect-redis": "1.4.x"
   , "express": "2.5.x"
-  , "jade": "0.20.x"
-  , "ntwitter": "0.2.x"
+  , "jade": "0.26.x"
+  , "ntwitter": "0.3.x"
   , "oauth": "0.9.x"
   , "redis": "0.7.x"
   }
 , "devDependencies": {
-    "mocha": "0.10.x"
-  , "sinon": "1.2.x"
+    "mocha": "1.2.x"
+  , "sinon": "1.3.x"
   }
 , "scripts": {
     "start": "node server.js"
